@@ -30,15 +30,13 @@ router.beforeEach((to, _from, next) => {
   }
 
   if (to.meta.guest && isLoggedIn) {
-    // Ako je admin, ide na admin dashboard
     if (user.role === 'admin') {
       return next('/admin')
     } 
-    // Inače na user dashboard
     return next('/dashboard')
   }
 
-  if (to.meta.requiresAdmin && user.role !== 'admin') {
+  if (to.meta.requiresAdmin && (!user.role || user.role !== 'admin')) {
     return next('/dashboard')
   }
 

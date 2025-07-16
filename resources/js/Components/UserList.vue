@@ -1,7 +1,15 @@
 <template>
   <div class="user-list">
     <h2>Registered Users</h2>
-    <button class="btn-add" @click="openForm" aria-label="Add new user">+ Add User</button>
+
+    <button
+      v-if="currentUser.role === 'admin'"
+      class="btn-add"
+      @click="openForm"
+      aria-label="Add new user"
+    >
+      + Add User
+    </button>
 
     <table aria-label="List of registered users">
       <thead>
@@ -18,8 +26,14 @@
           <td>{{ user.email }}</td>
           <td>{{ user.role }}</td>
           <td>
-            <button @click="openForm(user)" aria-label="Edit user">✏️</button>
-            <button @click="deleteUser(user.id)" aria-label="Delete user">🗑️</button>
+            <!-- View gumb za sve -->
+            <button @click="viewUser(user)" aria-label="View user">👁️</button>
+
+            <!-- Edit/Delete samo za admina -->
+            <template v-if="currentUser.role === 'admin'">
+              <button @click="openForm(user)" aria-label="Edit user">✏️</button>
+              <button @click="deleteUser(user.id)" aria-label="Delete user">🗑️</button>
+            </template>
           </td>
         </tr>
       </tbody>
@@ -32,6 +46,7 @@
           :user="selectedUser"
           @success="handleSubmit"
           @cancel="closeForm"
+          :readonly="currentUser.role !== 'admin'" 
         />
       </div>
     </div>
@@ -47,12 +62,14 @@ export default {
   data() {
     return {
       users: [],
+      currentUser: {}, // za provjeru role
       showForm: false,
       selectedUser: null,
     }
   },
-  mounted() {
-    this.fetchUsers()
+  async mounted() {
+    await this.fetchCurrentUser()
+    await this.fetchUsers()
   },
   methods: {
     async fetchUsers() {
@@ -67,6 +84,18 @@ export default {
         alert('Failed to load users')
       }
     },
+    async fetchCurrentUser() {
+      try {
+        const token = localStorage.getItem('token')
+        const response = await axios.get('/api/user', {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        this.currentUser = response.data
+      } catch (error) {
+        console.error('Failed to fetch current user:', error)
+        alert('Failed to load current user')
+      }
+    },
     openForm(user = null) {
       this.selectedUser = user
       this.showForm = true
@@ -78,13 +107,12 @@ export default {
     async handleSubmit(role) {
       this.closeForm()
       await this.fetchUsers()
+      this.$emit('refresh-stats')   // <-- emit event za osvježavanje widgeta
 
+      // Ostalo ako želiš dodatno nešto s adminima
       if (role === 'admin') {
-        this.updateAdminWidget()
+        // Možeš ovdje nešto dodati ako treba
       }
-    },
-    updateAdminWidget() {
-      console.log('Admin role selected — update widget accordingly')
     },
     async deleteUser(id) {
       if (confirm('Are you sure you want to delete this user?')) {
@@ -93,12 +121,15 @@ export default {
           await axios.delete(`/api/users/${id}`, {
             headers: { Authorization: `Bearer ${token}` },
           })
-          this.fetchUsers()
+          
         } catch (error) {
           console.error('Failed to delete user:', error)
           alert('Failed to delete user')
         }
       }
+    },
+    viewUser(user) {
+      alert(`Name: ${user.name}\nEmail: ${user.email}\nRole: ${user.role}`)
     },
   },
 }

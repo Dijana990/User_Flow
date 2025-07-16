@@ -17,6 +17,7 @@
         </div>
       </section>
 
+      <!-- UserList uvijek koristi @refresh-stats -->
       <UserList @refresh-stats="refreshStats" />
     </div>
   </div>
@@ -31,33 +32,43 @@ export default {
   data() {
     return {
       userName: '',
+      userRole: '',
       users: 0,
       admins: 0,
     }
   },
   async mounted() {
-    await this.refreshStats()
     const token = localStorage.getItem('token')
     try {
       const userResponse = await axios.get('/api/user', { headers: { Authorization: `Bearer ${token}` } })
       this.userName = userResponse.data.name
+      this.userRole = userResponse.data.role
     } catch (error) {
       console.error('Error retrieving user:', error)
     }
+    await this.refreshStats()
   },
   methods: {
     async refreshStats() {
       try {
+        if (this.userRole !== 'admin') {
+          this.users = 0
+          this.admins = 0
+          return
+        }
+
         const token = localStorage.getItem('token')
         const headers = { Authorization: `Bearer ${token}` }
 
         const userCount = await axios.get('/api/users/count', { headers })
         const adminCount = await axios.get('/api/users/admins/count', { headers })
 
-        this.users = userCount.data.users
-        this.admins = adminCount.data.admins
+        this.users = userCount.data.count
+        this.admins = adminCount.data.count
       } catch (error) {
         console.error('Error retrieving statistics:', error)
+        this.users = 0
+        this.admins = 0
       }
     },
     logout() {

@@ -15,12 +15,16 @@ Route::middleware('auth:sanctum')->group(function () {
         return $request->user();
     });
 
-    Route::get('/users', [UserController::class, 'index']); // Dohvat svih korisnika
-    Route::post('/users', [UserController::class, 'store']); // Dodavanje novog korisnika
-    Route::put('/users/{id}', [UserController::class, 'update']); // Update korisnika
-    Route::delete('/users/{id}', [UserController::class, 'destroy']); // Brisanje korisnika
+    // Dostupno SVIM autentificiranim korisnicima
+    Route::get('/users', [UserController::class, 'index']);
 
-    Route::get('/users/count', [UserController::class, 'count']);
-    Route::get('/users/admins/count', [UserController::class, 'countAdmins']);
+    // Dostupno SAMO ADMINIMA
+    Route::middleware('admin')->group(function () {
+        Route::post('/users', [UserController::class, 'store']);
+        Route::put('/users/{id}', [UserController::class, 'update']);
+        Route::delete('/users/{id}', [UserController::class, 'destroy']);
+
+        Route::get('/users/count', [UserController::class, 'count']);
+        Route::get('/users/admins/count', [UserController::class, 'countAdmins']);
+    });
 });
-

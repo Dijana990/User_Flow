@@ -1,57 +1,44 @@
 <template>
   <div class="register-container">
-    <h1>Sign Up</h1>
-
-    <form class="register-form" @submit.prevent="registerUser">
-      <!-- name -->
+    <h1>Register</h1>
+    <form @submit.prevent="register" class="register-form">
       <div class="form-group">
         <label for="name">Name</label>
-        <input id="name" v-model="form.name" type="text" required />
+        <input v-model="name" id="name" type="text" placeholder="Name" required />
       </div>
 
-      <!-- email -->
       <div class="form-group">
-        <label for="email">E‑mail</label>
-        <input id="email" v-model="form.email" type="email" required />
+        <label for="email">Email</label>
+        <input v-model="email" id="email" type="email" placeholder="Email" required />
       </div>
 
-      <!-- password -->
       <div class="form-group">
         <label for="password">Password</label>
-        <input id="password" v-model="form.password" type="password" required />
+        <input v-model="password" id="password" type="password" placeholder="Password" required />
       </div>
 
-      <!-- confirm password -->
       <div class="form-group">
-        <label for="password_confirmation">Confirm password</label>
-        <input
-          id="password_confirmation"
-          v-model="form.password_confirmation"
-          type="password"
-          required
-        />
+        <label for="confirmPassword">Confirm Password</label>
+        <input v-model="confirmPassword" id="confirmPassword" type="password" placeholder="Confirm Password" required />
       </div>
 
-      <!-- role -->
       <div class="form-group">
         <label for="role">Role</label>
-        <select id="role" v-model="form.role" required>
-          <option disabled value="">Select role</option>
+        <select v-model="role" id="role" required>
           <option value="user">User</option>
           <option value="admin">Admin</option>
         </select>
       </div>
 
-      <button class="btn-submit" type="submit">Sign Up</button>
+      <button class="btn-submit" type="submit">Register</button>
     </form>
-
-    <p v-if="success" class="success">Registration successful ✔</p>
-    <p v-if="error"   class="error">{{ error }}</p>
 
     <p class="switch">
       Already have an account?
-      <router-link class="link" to="/login">Sign In</router-link>
+      <router-link class="link" to="/login">Login</router-link>
     </p>
+
+    <p v-if="error" class="error">{{ error }}</p>
   </div>
 </template>
 
@@ -59,39 +46,52 @@
 import axios from 'axios'
 
 export default {
+  name: 'RegisterComponent',
   data() {
     return {
-      form: {
-        name: '',
-        email: '',
-        password: '',
-        password_confirmation: '', 
-        role: '',
-      },
-      success: false,
+      name: '',
+      email: '',
+      password: '',
+      confirmPassword: '',
+      role: 'user',
       error: null,
     }
   },
   methods: {
-    async registerUser() {
-      this.success = false
-      this.error = null
-      try {
-        const { data } = await axios.post('/api/register', this.form) 
+    async register() {
+      this.error = null;
 
-        localStorage.setItem('token', data.access_token)
-        localStorage.setItem('user', JSON.stringify(data.user))
-
-        this.success = true
-        setTimeout(() => {
-          this.$router.push(data.user.role === 'admin' ? '/admin' : '/dashboard')
-        }, 800)
-      } catch (err) {
-        this.error = err.response?.data?.message || 'Registration failed'
+      if (this.password.trim() !== this.confirmPassword.trim()) {
+        this.error = 'Passwords do not match.';
+        return;
       }
+
+      try {
+        const response = await axios.post('/api/register', {
+          name: this.name,
+          email: this.email,
+          password: this.password,
+          password_confirmation: this.confirmPassword, 
+          role: this.role, 
+        });
+
+        const { access_token, user } = response.data;
+
+        localStorage.setItem('token', access_token);
+        localStorage.setItem('user', JSON.stringify(user));
+
+        if (user.role === 'admin') {
+          this.$router.push('/admin');
+        } else {
+          this.$router.push('/dashboard');
+        }
+
+      } catch (err) {
+        this.error = err.response?.data?.message || 'Registration failed';
+      }
+    }
     },
-  },
-}
+  }
 </script>
 
 <style lang="scss" scoped>
