@@ -101,7 +101,6 @@
     transition: all 0.3s ease;
     margin-top: 1rem;
 
-    /* centriranje */
     margin-left: auto;
     margin-right: auto;
 
@@ -116,7 +115,6 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      /*background: linear-gradient(90deg, transparent, #8aabab, transparent);*/
       transition: left 0.5s;
     }
     
@@ -240,29 +238,5 @@
   }
   100% {
     background-position: 200% 0;
-  }
-}
-
-.login-container input:focus-visible,
-.login-container .btn-submit:focus-visible,
-.login-container .link:focus-visible {
-  outline: 2px solid #667eea;
-  outline-offset: 2px;
-}
-.switch {
-  margin-top: 1.5rem;
-  text-align: center;
-  font-size: 0.95rem;
-
-  .link {
-    color: #00a0aa;
-    cursor: pointer;
-    text-decoration: underline;
-    margin-left: 0.25rem;
-    transition: color 0.3s ease;
-
-    &:hover {
-      color: #66e0e5;
-    }
   }
 }

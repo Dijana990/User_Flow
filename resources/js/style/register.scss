@@ -9,7 +9,6 @@
   box-shadow: 0 25px 45px rgba(0,0,0,0.1);
   position: relative;
   overflow: hidden;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 
   &::before {
     content: '';
@@ -36,7 +35,7 @@
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     text-shadow: none;
-    color: transparent; /* fallback */
+    color: transparent;
   }
 
   .register-form {
@@ -49,6 +48,36 @@
     position: relative;
     display: flex;
     flex-direction: column;
+    
+    select {
+    width: 90%;
+    padding: 1rem;
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    font-size: 1rem;
+    color: #2d3748;
+    transition: all 0.3s ease;
+    appearance: none; 
+
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 0.65rem auto;
+
+    &:focus {
+    outline: none;
+    border-color: #2b3537;
+    background: rgba(255,255,255,0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px #00656e;
+    }
+
+   &:hover {
+    border-color: rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.12);
+    }
+  }
 
     label {
       margin-bottom: 0.5rem;
@@ -113,7 +142,6 @@
       left: -100%;
       width: 100%;
       height: 100%;
-      /*background: linear-gradient(90deg, transparent, #007bff, transparent);*/
       transition: left 0.5s;
       z-index: 0;
     }
@@ -239,21 +267,12 @@
   }
 }
 
-/* Accessibility focus outlines */
-.register-container input:focus-visible,
-.register-container .btn-submit:focus-visible,
-.register-container .link:focus-visible {
-  outline: 2px solid #007bff;
-  outline-offset: 2px;
-}
-
 .success {
-  color: #0f9d58; /* zelena boja */
+  color: #0f9d58; 
   margin-top: 1rem;
   text-align: center;
   font-weight: bold;
 }
-
 
 .error {
   color: red;

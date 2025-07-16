@@ -9,7 +9,7 @@
 
       <div class="form-group">
         <label for="email">Email</label>
-        <input v-model="email" id="email" type="email" placeholder="Email" required />
+        <input v-model="email" id="email" type="email" placeholder="E-mail" required />
       </div>
 
       <div class="form-group">
@@ -19,7 +19,7 @@
 
       <div class="form-group">
         <label for="confirmPassword">Confirm Password</label>
-        <input v-model="confirmPassword" id="confirmPassword" type="password" placeholder="Confirm Password" required />
+        <input v-model="confirmPassword" id="confirmPassword" type="password" placeholder="Confirm password" required />
       </div>
 
       <div class="form-group">
@@ -71,14 +71,15 @@ export default {
           name: this.name,
           email: this.email,
           password: this.password,
-          password_confirmation: this.confirmPassword, 
-          role: this.role, 
+          password_confirmation: this.confirmPassword,
+          role: this.role,
         });
 
         const { access_token, user } = response.data;
 
         localStorage.setItem('token', access_token);
         localStorage.setItem('user', JSON.stringify(user));
+
 
         if (user.role === 'admin') {
           this.$router.push('/admin');
@@ -90,8 +91,8 @@ export default {
         this.error = err.response?.data?.message || 'Registration failed';
       }
     }
-    },
   }
+}
 </script>
 
 <style lang="scss" scoped>

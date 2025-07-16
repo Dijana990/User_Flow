@@ -1,52 +1,59 @@
 <template>
-  <div class="dashboard">
-    <div class="main-content">
-      <header class="header">
-        <h1>Welcome, {{ userName }}</h1>
-        <button @click="logout" aria-label="Logout" class="btn-logout">Logout</button>
-      </header>
-
-      <section class="widgets">
-        <div class="widget">
-          <h3>Total Users</h3>
-          <p class="value">{{ users }}</p>
-        </div>
-        <div class="widget">
-          <h3>Admins</h3>
-          <p class="value">{{ admins }}</p>
-        </div>
-      </section>
-
-      <!-- UserList uvijek koristi @refresh-stats -->
-      <UserList @refresh-stats="refreshStats" />
+  <div class="admin-dashboard">
+    <div class="header">
+      <h1>Admin Dashboard</h1>
+      <button @click="logout" class="logout-btn">Logout</button>
     </div>
+
+    <section class="widgets">
+      <div class="widget">
+        <h3>Total Users</h3>
+        <p class="value">{{ users }}</p>
+      </div>
+      <div class="widget">
+        <h3>Total Admins</h3>
+        <p class="value">{{ admins }}</p>
+      </div>
+    </section>
+
+    <UserList @edit-user="editUser" @refresh="fetchUsers" ref="userList" />
+
+    <UserForm
+      v-if="showForm"
+      :user="selectedUser"
+      @close="closeForm"
+      @refresh="refreshAfterSubmit"
+    />
   </div>
 </template>
 
 <script>
 import axios from 'axios'
 import UserList from './UserList.vue'
+import UserForm from './UserForm.vue'
+import { auth } from '../store/auth.js'
 
 export default {
-  components: { UserList },
+  components: { UserList, UserForm },
   data() {
     return {
-      userName: '',
-      userRole: '',
+      showForm: false,
+      selectedUser: null,
       users: 0,
       admins: 0,
+      userRole: '', // dodano
     }
   },
   async mounted() {
-    const token = localStorage.getItem('token')
     try {
-      const userResponse = await axios.get('/api/user', { headers: { Authorization: `Bearer ${token}` } })
-      this.userName = userResponse.data.name
-      this.userRole = userResponse.data.role
+      const token = localStorage.getItem('token')
+      const headers = { Authorization: `Bearer ${token}` }
+      const response = await axios.get('/api/user', { headers })
+      this.userRole = response.data.role
+      await this.refreshStats()
     } catch (error) {
-      console.error('Error retrieving user:', error)
+      console.error('Failed to fetch user info:', error)
     }
-    await this.refreshStats()
   },
   methods: {
     async refreshStats() {
@@ -71,14 +78,30 @@ export default {
         this.admins = 0
       }
     },
+    editUser(user) {
+      this.selectedUser = user
+      this.showForm = true
+    },
+    closeForm() {
+      this.showForm = false
+      this.selectedUser = null
+    },
+    fetchUsers() {
+      this.$refs.userList.fetchUsers()
+    },
+    refreshAfterSubmit() {
+      this.closeForm()
+      this.fetchUsers()
+      this.refreshStats()  // opcionalno da se osvježe brojevi nakon izmjene
+    },
     logout() {
-      localStorage.removeItem('token')
+      auth.logout()
       this.$router.push('/login')
     },
-  },
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-@use '../style/dashboard.scss' as *;
+@use '../style/admin.scss' as *;
 </style>

@@ -1,5 +1,3 @@
-// /resources/js/store/auth.js
-
 export const auth = {
   getToken() {
     return localStorage.getItem('token')

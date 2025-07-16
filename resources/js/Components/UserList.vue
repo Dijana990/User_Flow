@@ -57,12 +57,13 @@
 import axios from 'axios'
 import UserForm from './UserForm.vue'
 
+
 export default {
   components: { UserForm },
   data() {
     return {
       users: [],
-      currentUser: {}, // za provjeru role
+      currentUser: {}, 
       showForm: false,
       selectedUser: null,
     }
@@ -107,27 +108,30 @@ export default {
     async handleSubmit(role) {
       this.closeForm()
       await this.fetchUsers()
-      this.$emit('refresh-stats')   // <-- emit event za osvježavanje widgeta
+      this.$emit('refresh-stats')  
 
-      // Ostalo ako želiš dodatno nešto s adminima
       if (role === 'admin') {
-        // Možeš ovdje nešto dodati ako treba
+        
       }
     },
     async deleteUser(id) {
-      if (confirm('Are you sure you want to delete this user?')) {
-        try {
-          const token = localStorage.getItem('token')
-          await axios.delete(`/api/users/${id}`, {
-            headers: { Authorization: `Bearer ${token}` },
-          })
-          
-        } catch (error) {
-          console.error('Failed to delete user:', error)
-          alert('Failed to delete user')
-        }
-      }
-    },
+    if (confirm('Are you sure you want to delete this user?')) {
+    try {
+      const token = localStorage.getItem('token')
+      await axios.delete(`/api/users/${id}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
+      console.log('User deleted successfully')
+      await this.fetchUsers()
+      this.$emit('refresh-stats')  
+    } catch (error) {
+      console.error('Failed to delete user:', error)
+      alert('Failed to delete user')
+    }
+  }
+}
+
+,
     viewUser(user) {
       alert(`Name: ${user.name}\nEmail: ${user.email}\nRole: ${user.role}`)
     },

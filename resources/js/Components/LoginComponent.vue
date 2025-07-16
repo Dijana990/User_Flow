@@ -4,12 +4,12 @@
     <form @submit.prevent="login"> 
       <div class="form-group">
         <label for="email">Email:</label>
-        <input id="email" v-model="email" type="email" required />
+        <input id="email" v-model="email" type="email" placeholder = "Enter your e-mail" required />
       </div>
 
       <div class="form-group">
         <label for="password">Password:</label>
-        <input id="password" v-model="password" type="password" required />
+        <input id="password" v-model="password" type="password" placeholder = "Enter password" required />
       </div>
 
       <button class="btn-submit" type="submit">Login</button>

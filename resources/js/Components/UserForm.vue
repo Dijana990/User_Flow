@@ -4,7 +4,7 @@
 
     <form @submit.prevent="submitForm">
       <label>
-        Name:
+        NAME:
         <input
           v-model="form.name"
           required
@@ -14,7 +14,7 @@
       </label>
 
       <label>
-        Email:
+        E-MAIL:
         <input
           v-model="form.email"
           type="email"
@@ -25,7 +25,7 @@
       </label>
 
       <label>
-        Password:
+        PASSWORD:
         <input
           v-model="form.password"
           type="password"
@@ -36,7 +36,7 @@
       </label>
 
       <label>
-        Role:
+        SELECT ROLE:
         <select
           v-model="form.role"
           required
@@ -99,31 +99,32 @@ export default {
   },
   methods: {
     async submitForm() {
-  if (this.readonly) return
+      if (this.readonly) return
 
-  const payload = { ...this.form }
-  if (this.user && !payload.password) {
-    delete payload.password
-  }
+      const payload = { ...this.form }
+      if (this.user && !payload.password) {
+        delete payload.password
+      }
 
-  try {
-    if (this.user?.id) {
-      await axios.put(`/api/users/${this.user.id}`, payload, {
-        withCredentials: true,
-      })
-    } else {
-      await axios.post('/api/users', payload, {
-        withCredentials: true,
-      })
-    }
+      const token = localStorage.getItem('token')
 
-    this.$emit('success', payload.role)
-  } catch (error) {
-    console.error('Failed to submit user form:', error)
-    alert('Error saving user.')
-  }
-}
+      try {
+        if (this.user?.id) {
+          await axios.put(`/api/users/${this.user.id}`, payload, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+        } else {
+          await axios.post('/api/users', payload, {
+            headers: { Authorization: `Bearer ${token}` },
+          })
+        }
 
+        this.$emit('success', payload.role)
+      } catch (error) {
+        console.error('Failed to submit user form:', error)
+        alert('Error saving user.')
+      }
+    },
   },
 }
 </script>

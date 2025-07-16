@@ -18,7 +18,6 @@ class UserController extends Controller
 
     public function index(): JsonResponse
     {
-        // Svi autentificirani korisnici mogu vidjeti popis korisnika
         $users = User::all();
         return response()->json($users);
     }
