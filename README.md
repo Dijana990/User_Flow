@@ -12,16 +12,15 @@ Ovo je responzivna web aplikacija razvijena kao zadatak za učenje i demonstraci
 - Administrator ima pristup frontend dashboardu gdje može raditi CRUD operacije nad korisnicima
 - Korištenje Vue Routera za dinamičko prebacivanje stranica bez reload-a
 - Responzivni dizajn za desktop i mobilne uređaje
-- (Opcionalno) Korištenje Tailwind CSS za stilizaciju
 
 ---
 
 ## Tehnologije
 
-- **Frontend:** Vue.js / Nuxt.js  
+- **Frontend:** Vue.js 
 - **Backend:** Laravel (PHP framework)  
-- **Baza podataka:** MySQL ili MariaDB  
-- **Stilizacija:** Tailwind CSS (opcionalno)  
+- **Baza podataka:** MySQL 
+- **Stilizacija:** SCSS 
 
 ---
 
@@ -29,5 +28,16 @@ Ovo je responzivna web aplikacija razvijena kao zadatak za učenje i demonstraci
 
 1. klonirajte backend repozitorij:
     ```bash
-   git clone <url-backend-repozitorija>
+   git clone <(https://github.com/Dijana990/User_Flow.git)>
    cd backend-folder
+2. pokretanje razvojnog servera
+   ```bash
+   php artisan serve
+3. instalacije Node.js ovisnosti
+   ```bash
+   npm install
+4. pokretanje razvojnog servera
+   ```bash
+   npm run dev
+
+
